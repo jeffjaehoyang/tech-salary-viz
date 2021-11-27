@@ -28,10 +28,13 @@ class ScatterPlot {
 
     vis.color = d3.scaleOrdinal(d3.schemePastel1);
 
-    vis.x = d3.scaleLinear().domain([0, 40]).range([0, vis.WIDTH]);
-    vis.y = d3.scaleLinear().domain([0, 2000000]).range([vis.HEIGHT, 0]);
+    vis.x = d3
+      .scaleLinear()
+      .domain([0, d3.max(allCalls.map((d) => d.totalyearlycompensation))])
+      .range([0, vis.WIDTH]);
+    vis.y = d3.scaleLinear().domain([0, 50]).range([vis.HEIGHT, 0]);
 
-    vis.yAxisCall = d3.axisLeft(vis.y);
+    vis.yAxisCall = d3.axisLeft(vis.y).ticks(16);
     vis.xAxisCall = d3.axisBottom(vis.x).ticks();
     vis.xAxis = vis.g
       .append("g")
@@ -46,8 +49,8 @@ class ScatterPlot {
     dots
       .enter()
       .append("circle")
-      .attr("cx", (d) => vis.x(d.yearsofexperience))
-      .attr("cy", (d) => vis.y(d.totalyearlycompensation))
+      .attr("cx", (d) => vis.x(d.totalyearlycompensation))
+      .attr("cy", (d) => vis.y(d.yearsofexperience))
       .attr("r", 1.5)
       .attr("fill", "#69b3a2");
 

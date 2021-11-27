@@ -19,6 +19,9 @@ const formatTime = d3.timeFormat("%d/%m/%Y");
 
 d3.csv("data/tech_salary_data.csv").then((data) => {
   data.forEach((d) => {
+    if (d.totalyearlycompensation <= 30000) {
+      console.log("TC below 30k");
+    }
     d.totalyearlycompensation = Number(d.totalyearlycompensation);
     d.yearsofexperience = Number(d.yearsofexperience);
     d.yearsatcompany = Number(d.yearsatcompany);
@@ -31,7 +34,7 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
 
   allCalls = data;
   // calls = data;
-  scatterPlot = new ScatterPlot("#stacked-area");
+  scatterPlot = new ScatterPlot("#main-scatter-plot");
 
   // nestedCalls = d3
   //   .nest()
