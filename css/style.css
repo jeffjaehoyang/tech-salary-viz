@@ -8,8 +8,23 @@
   height: 50px;
 }
 
-#data-filters {
+#data-filters-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
   padding: 20px;
+  border: 1px solid #d4d8da;
+  border-radius: 10px;
+}
+
+#data-filters {
+  display: flex;
+  flex-direction: row;
+}
+
+#filter-by-text {
+  color: #777;
+  margin-bottom: 10px;
 }
 
 .navbar-brand {

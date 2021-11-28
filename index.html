@@ -30,19 +30,23 @@
     </nav>
 
     <div class="container">
-      <div id="data-filters">
-        <div class="dropdown bootstrap-select fit-width">
-          <select
-            id="var-select"
-            class="selectpicker"
-            data-live-search="true"
-            title="Company name"
-            data-size="5"
-            multiple
-          ></select>
+      <div id="data-filters-container">
+        <span id="filter-by-text">Filter by ...</span>
+        <div id="data-filters">
+          <div class="dropdown bootstrap-select fit-width">
+            <select
+              id="company-select"
+              class="selectpicker"
+              data-live-search="true"
+              title="Company name"
+              data-size="5"
+              data-max-options="4"
+              multiple
+            ></select>
+          </div>
         </div>
-        <div id="main-scatter-plot"></div>
       </div>
+      <div id="main-scatter-plot"></div>
     </div>
 
     <!-- External JS libraries -->

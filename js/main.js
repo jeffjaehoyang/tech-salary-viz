@@ -31,7 +31,6 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
     d.stockgrantvalue = Number(d.stockgrantvalue);
     d.bonus = Number(d.bonus);
   });
-  console.log("data: ", data);
 
   allCalls = data;
   companyNames = allCalls.map((d) => upperCaseFirstLetter(d.company));
@@ -42,10 +41,13 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
   initDropdown();
 });
 
+$("#company-select").on("change", () => {
+  scatterPlot.wrangleData();
+});
+
 function initDropdown() {
-  const $dropdown = $("#var-select");
+  const $dropdown = $("#company-select");
   $.each(uniqueCompanyNames, function (i, companyName) {
-    console.log("appending options...");
     $dropdown.append(`<option value="${companyName}">${companyName}</option>`);
   });
   $dropdown.selectpicker("refresh");
