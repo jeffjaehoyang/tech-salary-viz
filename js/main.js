@@ -45,8 +45,12 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
   initDropdown();
 });
 
+// bunch of event handlers ...
+
 $("#company-select").on("change", () => {
   scatterPlot.wrangleData();
+  scatterPlot.groupCompany();
+  scatterPlot.updateVis();
 });
 
 $("#company-reset").on("click", () => {
@@ -54,8 +58,15 @@ $("#company-reset").on("click", () => {
   scatterPlot.updateVis();
 });
 
+$("#company-group").on("click", () => {
+  scatterPlot.groupCompany();
+  scatterPlot.updateVis();
+});
+
 $("#position-select").on("change", () => {
   scatterPlot.wrangleData();
+  scatterPlot.groupPosition();
+  scatterPlot.updateVis();
 });
 
 $("#position-reset").on("click", () => {
@@ -63,12 +74,24 @@ $("#position-reset").on("click", () => {
   scatterPlot.updateVis();
 });
 
+$("#position-group").on("click", () => {
+  scatterPlot.groupPosition();
+  scatterPlot.updateVis();
+});
+
 $("#city-select").on("change", () => {
   scatterPlot.wrangleData();
+  scatterPlot.groupLocation();
+  scatterPlot.updateVis();
 });
 
 $("#city-reset").on("click", () => {
   scatterPlot.resetLocation();
+  scatterPlot.updateVis();
+});
+
+$("#city-group").on("click", () => {
+  scatterPlot.groupLocation();
   scatterPlot.updateVis();
 });
 

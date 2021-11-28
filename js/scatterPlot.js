@@ -9,14 +9,18 @@ class ScatterPlot {
     this.filteredCompanyNames = [];
     this.filteredPositionTitles = [];
     this.filteredLocations = [];
+    this.currentGroupList = [];
     this.circleRad = 3.7;
     this.colorVariable = "company";
+    this.baseColor = "blue";
     this.initVis();
   }
 
   initVis() {
     const vis = this;
-    this.groupColor = d3.scaleOrdinal(d3.schemeSet1); // color grouping
+    this.groupColor = d3
+      .scaleOrdinal()
+      .range(["blue", "green", "red", "violet"]); // color grouping
 
     vis.MARGIN = { LEFT: 80, RIGHT: 100, TOP: 50, BOTTOM: 40 };
     // get the current width of the div where the chart appear, and attribute it to Svg
@@ -24,7 +28,6 @@ class ScatterPlot {
       parseInt(d3.select("#main-scatter-plot").style("width"), 10) -
       vis.MARGIN.LEFT -
       vis.MARGIN.RIGHT;
-    // vis.WIDTH = 800 - vis.MARGIN.LEFT - vis.MARGIN.RIGHT;
     vis.HEIGHT = 570 - vis.MARGIN.TOP - vis.MARGIN.BOTTOM;
 
     vis.svg = d3
@@ -133,6 +136,30 @@ class ScatterPlot {
     );
   }
 
+  groupCompany() {
+    // color group by company
+    const vis = this;
+    const selectedCompanyNames = $("#company-select").val();
+    vis.colorVariable = "company";
+    vis.currentGroupList = selectedCompanyNames;
+  }
+
+  groupPosition() {
+    // color group by position
+    const vis = this;
+    const selectedPositionTitles = $("#position-select").val();
+    vis.colorVariable = "position";
+    vis.currentGroupList = selectedPositionTitles;
+  }
+
+  groupLocation() {
+    // color group by location
+    const vis = this;
+    const selectedLocations = $("#city-select").val();
+    vis.colorVariable = "location";
+    vis.currentGroupList = selectedLocations;
+  }
+
   wrangleData() {
     const vis = this;
     vis.t = d3.transition().duration(750);
@@ -150,10 +177,8 @@ class ScatterPlot {
 
   filterCompany() {
     const vis = this;
-    console.log("filter company");
     // filter by company and call in wrangleData()
     const selectedCompanyNames = $("#company-select").val();
-    console.log("selected company names: ", selectedCompanyNames);
     if (selectedCompanyNames.length > 0) {
       vis.filteredCompanyNames = allCalls.filter(({ company }) =>
         selectedCompanyNames.includes(company)
@@ -165,10 +190,8 @@ class ScatterPlot {
 
   filterPosition() {
     const vis = this;
-    console.log("filter position");
     // filter by position name (swe, pm, etc) and call in wrangleData()
     const selectedPositions = $("#position-select").val();
-    console.log("selected positions: ", selectedPositions);
     if (selectedPositions.length > 0) {
       vis.filteredPositionTitles = allCalls.filter(({ title }) =>
         selectedPositions.includes(title)
@@ -179,17 +202,27 @@ class ScatterPlot {
   }
 
   filterLocation() {
-    console.log("filter location");
     const vis = this;
     // filter by location and call in wrangleData()
     const selectedLocations = $("#city-select").val();
-    console.log("selected locations: ", selectedLocations);
     if (selectedLocations.length > 0) {
       vis.filteredLocations = allCalls.filter(({ location }) =>
         selectedLocations.includes(location)
       );
     } else {
       vis.filteredLocations = allCalls;
+    }
+  }
+
+  getGroupByVariable(d) {
+    const vis = this;
+    switch (vis.colorVariable) {
+      case "company":
+        return d.company;
+      case "position":
+        return d.title;
+      case "location":
+        return d.location;
     }
   }
 
@@ -227,7 +260,7 @@ class ScatterPlot {
 
     vis.dots
       .attr("class", "update")
-      .attr("fill", (d) => this.groupColor(d.company))
+      .attr("fill", (d) => this.groupColor(vis.getGroupByVariable(d)))
       .transition(vis.t)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
@@ -237,7 +270,7 @@ class ScatterPlot {
     vis.dots
       .enter()
       .append("circle")
-      .attr("fill", (d) => this.groupColor(d.company))
+      .attr("fill", (d) => this.groupColor(vis.getGroupByVariable(d)))
       .transition(vis.t)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
@@ -263,6 +296,33 @@ class ScatterPlot {
     vis.dots.on("mouseout", function (d, i) {
       d3.select(this).attr("r", 4);
       vis.tooltip.transition().duration(500).style("opacity", 0);
+    });
+
+    d3.selectAll(".legend").remove();
+
+    const legend = vis.g
+      .append("g")
+      .attr("class", "legend")
+      .attr("transform", `translate(${vis.WIDTH - 10}, ${vis.HEIGHT - 95})`);
+    vis.currentGroupList.forEach((d, i) => {
+      const legendRow = legend
+        .append("g")
+        .attr("transform", `translate(0, ${i * 25})`);
+
+      legendRow
+        .append("rect")
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("fill", vis.groupColor(d));
+
+      legendRow
+        .append("text")
+        .attr("x", -10)
+        .attr("y", 10)
+        .attr("text-anchor", "end")
+        .style("text-transform", "capitalize")
+        .style("font-size", "15px")
+        .text(d);
     });
   }
 }
