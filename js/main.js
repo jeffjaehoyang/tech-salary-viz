@@ -11,8 +11,10 @@ let scatterPlot;
 
 let positionNames;
 let companyNames;
+let cityNames;
 let uniqueCompanyNames;
 let uniquePositionNames;
+let uniqueCityNames;
 
 d3.csv("data/tech_salary_data.csv").then((data) => {
   data.forEach((d) => {
@@ -25,6 +27,7 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
     d.bonus = Number(d.bonus);
     d.company = upperCaseFirstLetter(d.company);
     d.title = upperCaseFirstLetter(d.title);
+    d.location = parseCityName(d.location);
   });
 
   allCalls = data;
@@ -35,6 +38,9 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
   positionNames = allCalls.map((d) => upperCaseFirstLetter(d.title));
   uniquePositionNames = [...new Set(positionNames)];
 
+  cityNames = allCalls.map((d) => d.location);
+  uniqueCityNames = [...new Set(cityNames)];
+
   scatterPlot = new ScatterPlot("#main-scatter-plot");
   initDropdown();
 });
@@ -44,6 +50,10 @@ $("#company-select").on("change", () => {
 });
 
 $("#position-select").on("change", () => {
+  scatterPlot.wrangleData();
+});
+
+$("#city-select").on("change", () => {
   scatterPlot.wrangleData();
 });
 
@@ -63,4 +73,10 @@ function initDropdown() {
     );
   });
   $positionDropdown.selectpicker("refresh");
+
+  const $cityDropdown = $("#city-select");
+  $.each(uniqueCityNames, function (i, cityName) {
+    $cityDropdown.append(`<option value="${cityName}">${cityName}</option>`);
+  });
+  $cityDropdown.selectpicker("refresh");
 }

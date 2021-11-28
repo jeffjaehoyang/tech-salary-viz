@@ -5,6 +5,11 @@ function upperCaseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
+const parseCityName = (string) => {
+  // "San Francisco, CA"
+  return string.split(",")[0];
+};
+
 const intersection = (arr1, arr2) => {
   const res = [];
   for (let i = 0; i < arr1.length; i++) {

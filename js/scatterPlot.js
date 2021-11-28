@@ -8,7 +8,9 @@ class ScatterPlot {
     this.dataFiltered = allCalls;
     this.filteredCompanyNames = [];
     this.filteredPositionTitles = [];
+    this.filteredLocations = [];
     this.circleRad = 3.7;
+    this.colorVariable = "company";
     this.initVis();
   }
 
@@ -39,9 +41,12 @@ class ScatterPlot {
       .scaleLinear()
       .domain([0, d3.max(allCalls.map((d) => d.totalyearlycompensation))])
       .range([0, vis.WIDTH]);
-    vis.y = d3.scaleLinear().domain([0, 50]).range([vis.HEIGHT, 0]);
+    vis.y = d3
+      .scaleLinear()
+      .domain([0, d3.max(vis.dataFiltered.map((d) => d.yearsofexperience))])
+      .range([vis.HEIGHT, 0]);
 
-    vis.yAxisCall = d3.axisLeft(vis.y).ticks(16);
+    vis.yAxisCall = d3.axisLeft(vis.y).ticks();
     vis.xAxisCall = d3.axisBottom(vis.x).ticks();
     vis.xAxis = vis.g
       .append("g")
@@ -101,13 +106,12 @@ class ScatterPlot {
     // filter data based on selections
     vis.filterCompany();
     vis.filterPosition();
+    vis.filterLocation();
     vis.dataFiltered = intersectMany(
       vis.filteredCompanyNames,
-      vis.filteredPositionTitles
-      // vis.filteredLocations
+      vis.filteredPositionTitles,
+      vis.filteredLocations
     );
-    console.log("updated data: ", vis.dataFiltered);
-    // vis.filterLocation();
     vis.updateVis();
   }
 
@@ -142,8 +146,18 @@ class ScatterPlot {
   }
 
   filterLocation() {
+    console.log("filter location");
     const vis = this;
     // filter by location and call in wrangleData()
+    const selectedLocations = $("#city-select").val();
+    console.log("selected locations: ", selectedLocations);
+    if (selectedLocations.length > 0) {
+      vis.filteredLocations = allCalls.filter(({ location }) =>
+        selectedLocations.includes(location)
+      );
+    } else {
+      vis.filteredLocations = allCalls;
+    }
   }
 
   updateVis() {
