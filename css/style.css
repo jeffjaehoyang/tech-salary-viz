@@ -8,6 +8,10 @@
   height: 50px;
 }
 
+#data-filters {
+  padding: 20px;
+}
+
 .navbar-brand {
   height: 60px;
   padding: 5px 0px;

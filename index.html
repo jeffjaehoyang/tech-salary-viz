@@ -23,31 +23,25 @@
     <nav class="navbar navbar-light bg-light">
       <div class="container">
         <a class="navbar-brand" href="#"
-          ><img id="logo" src="img/logo.png"
-        /></a>
+          ><img id="logo" src="img/logo.png" />
+          <span class="ml-2 font-weight-bold">Get Paid Fairly @Tech</span></a
+        >
       </div>
     </nav>
 
-    <!-- Bootstrap grid setup -->
     <div class="container">
-      <div class="row">
-        <div id="left-charts" class="col-sm-12 col-md-8">
-          <div class="row">
-            <div class="dropdown bootstrap-select fit-width">
-              <select
-                id="var-select"
-                class="selectpicker"
-                data-live-search="true"
-                multiple
-              >
-                <option selected value="call_revenue">Revenue (USD)</option>
-                <option value="call_duration">Call Time (seconds)</option>
-                <option value="units_sold">Units Sold</option>
-              </select>
-            </div>
-          </div>
-          <div id="main-scatter-plot"></div>
+      <div id="data-filters">
+        <div class="dropdown bootstrap-select fit-width">
+          <select
+            id="var-select"
+            class="selectpicker"
+            data-live-search="true"
+            title="Company name"
+            data-size="5"
+            multiple
+          ></select>
         </div>
+        <div id="main-scatter-plot"></div>
       </div>
     </div>
 

@@ -13,8 +13,13 @@ class ScatterPlot {
     const vis = this;
 
     vis.MARGIN = { LEFT: 80, RIGHT: 100, TOP: 50, BOTTOM: 40 };
-    vis.WIDTH = 800 - vis.MARGIN.LEFT - vis.MARGIN.RIGHT;
-    vis.HEIGHT = 370 - vis.MARGIN.TOP - vis.MARGIN.BOTTOM;
+    // get the current width of the div where the chart appear, and attribute it to Svg
+    vis.WIDTH =
+      parseInt(d3.select("#main-scatter-plot").style("width"), 10) -
+      vis.MARGIN.LEFT -
+      vis.MARGIN.RIGHT;
+    // vis.WIDTH = 800 - vis.MARGIN.LEFT - vis.MARGIN.RIGHT;
+    vis.HEIGHT = 570 - vis.MARGIN.TOP - vis.MARGIN.BOTTOM;
 
     vis.svg = d3
       .select(vis.parentElement)
