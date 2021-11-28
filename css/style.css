@@ -34,6 +34,19 @@
   padding: 5px 0px;
 }
 
+.dropdown {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.control-buttons {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
 body {
   background-color: #f1f3f3;
 }

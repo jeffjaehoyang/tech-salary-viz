@@ -100,6 +100,39 @@ class ScatterPlot {
     });
   }
 
+  resetCompany() {
+    const vis = this;
+    vis.filteredCompanyNames = allCalls;
+    $("#company-select").selectpicker("deselectAll");
+    vis.dataFiltered = intersectMany(
+      vis.filteredCompanyNames,
+      vis.filteredPositionTitles,
+      vis.filteredLocations
+    );
+  }
+
+  resetPosition() {
+    const vis = this;
+    vis.filteredPositionTitles = allCalls;
+    $("#position-select").selectpicker("deselectAll");
+    vis.dataFiltered = intersectMany(
+      vis.filteredCompanyNames,
+      vis.filteredPositionTitles,
+      vis.filteredLocations
+    );
+  }
+
+  resetLocation() {
+    const vis = this;
+    vis.filteredLocations = allCalls;
+    $("#city-select").selectpicker("deselectAll");
+    vis.dataFiltered = intersectMany(
+      vis.filteredCompanyNames,
+      vis.filteredPositionTitles,
+      vis.filteredLocations
+    );
+  }
+
   wrangleData() {
     const vis = this;
     vis.t = d3.transition().duration(750);

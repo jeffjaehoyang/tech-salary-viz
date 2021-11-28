@@ -49,12 +49,27 @@ $("#company-select").on("change", () => {
   scatterPlot.wrangleData();
 });
 
+$("#company-reset").on("click", () => {
+  scatterPlot.resetCompany();
+  scatterPlot.updateVis();
+});
+
 $("#position-select").on("change", () => {
   scatterPlot.wrangleData();
 });
 
+$("#position-reset").on("click", () => {
+  scatterPlot.resetPosition();
+  scatterPlot.updateVis();
+});
+
 $("#city-select").on("change", () => {
   scatterPlot.wrangleData();
+});
+
+$("#city-reset").on("click", () => {
+  scatterPlot.resetLocation();
+  scatterPlot.updateVis();
 });
 
 function initDropdown() {
