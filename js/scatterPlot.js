@@ -12,7 +12,6 @@ class ScatterPlot {
   initVis() {
     const vis = this;
     this.groupColor = d3.scaleOrdinal(d3.schemeSet1); // color grouping
-    console.log("init scatter plot");
 
     vis.MARGIN = { LEFT: 80, RIGHT: 100, TOP: 50, BOTTOM: 40 };
     // get the current width of the div where the chart appear, and attribute it to Svg
@@ -57,22 +56,52 @@ class ScatterPlot {
       .attr("cy", (d) => vis.y(d.yearsofexperience))
       .attr("r", 1.5)
       .attr("fill", "lightblue");
+
+    vis.dataFiltered = allCalls;
   }
 
   wrangleData() {
     const vis = this;
     vis.t = d3.transition().duration(750);
     // filter data based on selections
+    vis.filterCompany();
+    vis.filterPosition();
+    vis.filterLocation();
+    vis.updateVis();
+  }
+
+  filterCompany() {
+    const vis = this;
+
+    // filter by company and call in wrangleData()
     const selectedCompanyNames = $("#company-select").val();
-    console.log("company name selected: ", selectedCompanyNames);
     if (selectedCompanyNames.length > 0) {
-      vis.dataFiltered = allCalls.filter(({ company }) =>
-        selectedCompanyNames.includes(company)
+      vis.dataFiltered = vis.dataFiltered.filter(({ company }) =>
+        selectedCompanyNames.includes(upperCaseFirstLetter(company))
       );
     } else {
       vis.dataFiltered = allCalls;
     }
-    vis.updateVis();
+  }
+
+  filterPosition() {
+    const vis = this;
+
+    // filter by position name (swe, pm, etc) and call in wrangleData()
+    const selectedPositions = $("#position-select").val();
+    if (selectedPositions.length > 0) {
+      vis.dataFiltered = allCalls.filter(({ title }) =>
+        selectedPositions.includes(upperCaseFirstLetter(title))
+      );
+    } else {
+      vis.dataFiltered = allCalls;
+    }
+  }
+
+  filterLocation() {
+    const vis = this;
+
+    // filter by location and call in wrangleData()
   }
 
   updateVis() {
@@ -97,8 +126,6 @@ class ScatterPlot {
     vis.yAxis.transition(vis.t).call(vis.yAxisCall);
 
     // Add dots
-    console.log("filtered data: ", vis.dataFiltered);
-
     vis.dots = vis.g.selectAll("circle").data(vis.dataFiltered);
 
     vis.dots
