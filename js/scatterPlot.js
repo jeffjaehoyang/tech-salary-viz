@@ -10,6 +10,8 @@ class ScatterPlot {
   }
 
   initVis() {
+    let circleRad = 3.65;
+
     const vis = this;
     this.groupColor = d3.scaleOrdinal(d3.schemeSet1); // color grouping
     console.log("init scatter plot");
@@ -53,10 +55,11 @@ class ScatterPlot {
     vis.dots
       .enter()
       .append("circle")
+      .style('opacity', 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
-      .attr("r", 1.5)
-      .attr("fill", "lightblue");
+      .attr("r", circleRad)
+      .attr("fill", "blue");
   }
 
   wrangleData() {
@@ -113,17 +116,21 @@ class ScatterPlot {
       .attr("class", "update")
       .attr("fill", (d) => this.groupColor(d.company))
       .transition(vis.t)
+      .style('opacity', 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
-      .attr("r", 1.5);
+      .attr("r", circleRad);
+      
 
     vis.dots
       .enter()
       .append("circle")
       .attr("fill", (d) => this.groupColor(d.company))
       .transition(vis.t)
+      .style('opacity', 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
-      .attr("r", 1.5);
+      .attr("r", circleRad);
+      
   }
 }
