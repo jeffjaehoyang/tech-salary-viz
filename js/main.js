@@ -23,6 +23,8 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
     d.basesalary = Number(d.basesalary);
     d.stockgrantvalue = Number(d.stockgrantvalue);
     d.bonus = Number(d.bonus);
+    d.company = upperCaseFirstLetter(d.company);
+    d.title = upperCaseFirstLetter(d.title);
   });
 
   allCalls = data;

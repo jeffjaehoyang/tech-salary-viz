@@ -8,12 +8,11 @@ class ScatterPlot {
     this.dataFiltered = allCalls;
     this.filteredCompanyNames = [];
     this.filteredPositionTitles = [];
+    this.circleRad = 3.7;
     this.initVis();
   }
 
   initVis() {
-    let circleRad = 3.7;
-
     const vis = this;
     this.groupColor = d3.scaleOrdinal(d3.schemeSet1); // color grouping
 
@@ -51,16 +50,49 @@ class ScatterPlot {
       .call(vis.xAxisCall);
     vis.yAxis = vis.g.append("g").attr("class", "y axis").call(vis.yAxisCall);
 
+    // Add tooltip
+    vis.tooltip = d3
+      .select("#main-scatter-plot")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px");
+
     // Add dots
     vis.dots = vis.g.selectAll("circle").data(allCalls);
     vis.dots
       .enter()
       .append("circle")
-      .style('opacity', 0.5)
+      .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
-      .attr("r", circleRad)
+      .attr("r", vis.circleRad)
       .attr("fill", "blue");
+
+    vis.dots.on("mouseover", function (d, idx, allData) {
+      d3.select(this).attr("r", vis.circleRad);
+      vis.tooltip.transition().duration(200).style("opacity", 1);
+      vis.tooltip.html(
+        "Company <b>" +
+          d.company +
+          "</b>: " +
+          "title=" +
+          d.title +
+          ", tc=" +
+          d.totalyearlycompensation +
+          "<br>" +
+          "yoe=" +
+          d.yearsofexperience
+      );
+    });
+    vis.dots.on("mouseout", function (d, i) {
+      d3.select(this).attr("r", 4);
+      vis.tooltip.transition().duration(500).style("opacity", 0);
+    });
   }
 
   wrangleData() {
@@ -72,6 +104,7 @@ class ScatterPlot {
     vis.dataFiltered = intersectMany(
       vis.filteredCompanyNames,
       vis.filteredPositionTitles
+      // vis.filteredLocations
     );
     console.log("updated data: ", vis.dataFiltered);
     // vis.filterLocation();
@@ -86,7 +119,7 @@ class ScatterPlot {
     console.log("selected company names: ", selectedCompanyNames);
     if (selectedCompanyNames.length > 0) {
       vis.filteredCompanyNames = allCalls.filter(({ company }) =>
-        selectedCompanyNames.includes(upperCaseFirstLetter(company))
+        selectedCompanyNames.includes(company)
       );
     } else {
       vis.filteredCompanyNames = allCalls;
@@ -101,7 +134,7 @@ class ScatterPlot {
     console.log("selected positions: ", selectedPositions);
     if (selectedPositions.length > 0) {
       vis.filteredPositionTitles = allCalls.filter(({ title }) =>
-        selectedPositions.includes(upperCaseFirstLetter(title))
+        selectedPositions.includes(title)
       );
     } else {
       vis.filteredPositionTitles = allCalls;
@@ -149,21 +182,40 @@ class ScatterPlot {
       .attr("class", "update")
       .attr("fill", (d) => this.groupColor(d.company))
       .transition(vis.t)
-      .style('opacity', 0.5)
+      .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
-      .attr("r", circleRad);
-      
+      .attr("r", vis.circleRad);
 
     vis.dots
       .enter()
       .append("circle")
       .attr("fill", (d) => this.groupColor(d.company))
       .transition(vis.t)
-      .style('opacity', 0.5)
+      .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
-      .attr("r", circleRad);
-      
+      .attr("r", vis.circleRad);
+
+    vis.dots.on("mouseover", function (d, idx, allData) {
+      d3.select(this).attr("r", vis.circleRad);
+      vis.tooltip.transition().duration(200).style("opacity", 1);
+      vis.tooltip.html(
+        "Company <b>" +
+          d.company +
+          "</b>: " +
+          "title=" +
+          d.title +
+          ", tc=" +
+          d.totalyearlycompensation +
+          "<br>" +
+          "yoe=" +
+          d.yearsofexperience
+      );
+    });
+    vis.dots.on("mouseout", function (d, i) {
+      d3.select(this).attr("r", 4);
+      vis.tooltip.transition().duration(500).style("opacity", 0);
+    });
   }
 }
