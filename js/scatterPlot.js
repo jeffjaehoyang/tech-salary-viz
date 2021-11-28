@@ -5,7 +5,9 @@
 class ScatterPlot {
   constructor(_parentElement) {
     this.parentElement = _parentElement;
-
+    this.dataFiltered = allCalls;
+    this.filteredCompanyNames = [];
+    this.filteredPositionTitles = [];
     this.initVis();
   }
 
@@ -67,41 +69,47 @@ class ScatterPlot {
     // filter data based on selections
     vis.filterCompany();
     vis.filterPosition();
-    vis.filterLocation();
+    vis.dataFiltered = intersectMany(
+      vis.filteredCompanyNames,
+      vis.filteredPositionTitles
+    );
+    console.log("updated data: ", vis.dataFiltered);
+    // vis.filterLocation();
     vis.updateVis();
   }
 
   filterCompany() {
     const vis = this;
-
+    console.log("filter company");
     // filter by company and call in wrangleData()
     const selectedCompanyNames = $("#company-select").val();
+    console.log("selected company names: ", selectedCompanyNames);
     if (selectedCompanyNames.length > 0) {
-      vis.dataFiltered = vis.dataFiltered.filter(({ company }) =>
+      vis.filteredCompanyNames = allCalls.filter(({ company }) =>
         selectedCompanyNames.includes(upperCaseFirstLetter(company))
       );
     } else {
-      vis.dataFiltered = allCalls;
+      vis.filteredCompanyNames = allCalls;
     }
   }
 
   filterPosition() {
     const vis = this;
-
+    console.log("filter position");
     // filter by position name (swe, pm, etc) and call in wrangleData()
     const selectedPositions = $("#position-select").val();
+    console.log("selected positions: ", selectedPositions);
     if (selectedPositions.length > 0) {
-      vis.dataFiltered = allCalls.filter(({ title }) =>
+      vis.filteredPositionTitles = allCalls.filter(({ title }) =>
         selectedPositions.includes(upperCaseFirstLetter(title))
       );
     } else {
-      vis.dataFiltered = allCalls;
+      vis.filteredPositionTitles = allCalls;
     }
   }
 
   filterLocation() {
     const vis = this;
-
     // filter by location and call in wrangleData()
   }
 
