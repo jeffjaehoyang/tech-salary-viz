@@ -10,7 +10,7 @@ class ScatterPlot {
   }
 
   initVis() {
-    let circleRad = 3.65;
+    let circleRad = 3.7;
 
     const vis = this;
     this.groupColor = d3.scaleOrdinal(d3.schemeSet1); // color grouping
