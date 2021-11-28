@@ -33,12 +33,23 @@
       <div id="data-filters-container">
         <span id="filter-by-text">Filter by ...</span>
         <div id="data-filters">
-          <div class="dropdown bootstrap-select fit-width">
+          <div class="dropdown bootstrap-select fit-width mr-4">
             <select
               id="company-select"
               class="selectpicker"
               data-live-search="true"
-              title="Company name"
+              title="Select Company"
+              data-size="5"
+              data-max-options="4"
+              multiple
+            ></select>
+          </div>
+          <div class="dropdown bootstrap-select fit-width">
+            <select
+              id="position-select"
+              class="selectpicker"
+              data-live-search="true"
+              title="Select Position"
               data-size="5"
               data-max-options="4"
               multiple
@@ -81,10 +92,7 @@
 
     <!-- Custom JS -->
     <script src="js/scatterPlot.js"></script>
-    <script src="js/stackedAreaChart.js"></script>
-    <script src="js/donutChart.js"></script>
     <script src="js/timeline.js"></script>
-    <script src="js/barChart.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
