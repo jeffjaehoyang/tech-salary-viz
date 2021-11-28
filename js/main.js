@@ -14,13 +14,6 @@ let companyNames;
 let uniqueCompanyNames;
 let uniquePositionNames;
 
-const parseTime = d3.timeParse("%d/%m/%Y");
-const formatTime = d3.timeFormat("%d/%m/%Y");
-
-function upperCaseFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-}
-
 d3.csv("data/tech_salary_data.csv").then((data) => {
   data.forEach((d) => {
     d.totalyearlycompensation = Number(d.totalyearlycompensation);
