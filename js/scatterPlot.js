@@ -97,7 +97,7 @@ class ScatterPlot {
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
       .attr("r", vis.circleRad)
-      .attr("fill", "blue");
+      .attr("fill", vis.baseColor);
 
     vis.dots.on("mouseover", function (d, idx, allData) {
       d3.select(this).attr("r", vis.circleRad);
@@ -304,6 +304,11 @@ class ScatterPlot {
     vis.xAxis.transition(vis.t).call(vis.xAxisCall);
     vis.yAxisCall.scale(vis.y);
     vis.yAxis.transition(vis.t).call(vis.yAxisCall);
+
+    this.groupColor = d3
+      .scaleOrdinal()
+      .domain(vis.currentGroupList)
+      .range(["blue", "green", "red", "violet"]); // color grouping
 
     // Add dots
     vis.dots = vis.g.selectAll("circle").data(vis.dataFiltered);
