@@ -9,6 +9,7 @@ class ScatterPlot {
     this.filteredCompanyNames = [];
     this.filteredPositionTitles = [];
     this.filteredLocations = [];
+    this.filteredYOE = [];
     this.currentGroupList = [];
     this.circleRad = 3.7;
     this.colorVariable = "company";
@@ -109,6 +110,34 @@ class ScatterPlot {
     vis.infoBox.html(
       "Data summary will be displayed once filters are applied."
     );
+
+    //brush
+    vis.brush = d3
+      .brushY()
+      .handleSize(10)
+      .extent([
+        [0, 0],
+        [vis.WIDTH, vis.HEIGHT],
+      ])
+      .on("end", () => vis.brushed(this));
+
+    vis.brushComponent = vis.g
+      .append("g")
+      .attr("class", "brush")
+      .call(vis.brush);
+  }
+
+  brushed(vis) {
+    const selection = d3.event.selection;
+    if (!selection) {
+      vis.yoeRange = [vis.HEIGHT, 0];
+    } else {
+      vis.yoeRange = selection.map(vis.y.invert);
+    }
+    vis.filterYOE();
+    vis.wrangleData();
+    vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
+    vis.updateVis();
   }
 
   resetCompany() {
@@ -199,11 +228,13 @@ class ScatterPlot {
     vis.filterPosition();
     vis.filterLocation();
     vis.filterGender();
+    vis.filterYOE();
     vis.dataFiltered = intersectMany(
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
       vis.filteredLocations,
-      vis.filteredGenders
+      vis.filteredGenders,
+      vis.filteredYOE
     );
   }
 
@@ -257,6 +288,16 @@ class ScatterPlot {
     } else {
       vis.filteredGenders = allCalls;
     }
+  }
+
+  filterYOE() {
+    const vis = this;
+    if (vis.yoeRange == null) vis.filteredYOE = allCalls;
+    vis.filteredYOE = allCalls.filter(
+      (d) =>
+        d.yearsofexperience <= vis.yoeRange[0] &&
+        d.yearsofexperience >= vis.yoeRange[1]
+    );
   }
 
   getGroupByVariable(d) {
@@ -376,6 +417,21 @@ class ScatterPlot {
 
     const infoText = vis.generateInfoText();
     vis.infoBox.html(infoText).transition().duration(1000).ease(d3.easeLinear);
+
+    //brush
+    vis.brush = d3
+      .brushY()
+      .handleSize(10)
+      .extent([
+        [0, 0],
+        [vis.WIDTH, vis.HEIGHT],
+      ])
+      .on("end", () => vis.brushed(this));
+
+    vis.brushComponent = vis.g
+      .append("g")
+      .attr("class", "brush")
+      .call(vis.brush);
   }
 
   generateInfoText() {
