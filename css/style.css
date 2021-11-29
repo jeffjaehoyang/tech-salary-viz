@@ -4,6 +4,14 @@
   display: block;
 }
 
+#info-summary-box {
+  display: flex;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #d4d8da;
+  border-radius: 10px;
+}
+
 #logo {
   height: 50px;
 }

@@ -76,52 +76,39 @@ class ScatterPlot {
       .attr("text-anchor", "middle")
       .text("Years of Experience");
 
+    // Tooltip
+    vis.tip = d3
+      .tip()
+      .attr("class", "d3-tip")
+      .html((d) => {
+        let text = `<strong>Company: </strong> <span style='color:red;text-transform:capitalize'>${d.company}</span><br>`;
+        text += `<strong>Title: </strong> <span style='color:red;text-transform:capitalize'>${d.title}</span><br>`;
+        text += `<strong>Total Compensation: </strong> <span style='color:red'>$${numberWithCommas(
+          d.totalyearlycompensation
+        )}</span><br>`;
+        text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
+        return text;
+      });
+    vis.g.call(vis.tip);
+
     // Add dots
     vis.dots = vis.g.selectAll("circle").data(vis.dataFiltered);
 
     vis.dots
       .enter()
       .append("circle")
+      .on("mouseover", vis.tip.show)
+      .on("mouseout", vis.tip.hide)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
       .attr("r", vis.circleRad)
       .attr("fill", vis.baseColor);
 
-    vis.tooltip = d3
-      .select("#main-scatter-plot")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("margin-left", `${vis.MARGIN.LEFT}px`)
-      .style("opacity", 0)
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "10px");
-
-    vis.dots.on("mouseover", function (d, idx, allData) {
-      d3.select(this).attr("r", vis.circleRad);
-      vis.tooltip.transition().duration(200).style("opacity", 1);
-      vis.tooltip.html(
-        "Company: <b>" +
-          d.company +
-          "</b> </br>" +
-          "Title: <b>" +
-          d.title +
-          "</b> </br>" +
-          "Total Compensation: <b>$" +
-          numberWithCommas(d.totalyearlycompensation) +
-          "</b> <br>" +
-          "Years of Experience: <b>" +
-          d.yearsofexperience +
-          " yrs</b> </br>"
-      );
-    });
-    vis.dots.on("mouseout", function (d, i) {
-      d3.select(this).attr("r", 4);
-      vis.tooltip.transition().duration(500).style("opacity", 0);
-    });
+    vis.infoBox = d3.select("#info-summary-box");
+    vis.infoBox.html(
+      "Data summary will be displayed once filters are applied."
+    );
   }
 
   resetCompany() {
@@ -184,7 +171,7 @@ class ScatterPlot {
     // color group by position
     const vis = this;
     const selectedPositionTitles = $("#position-select").val();
-    vis.colorVariable = "position";
+    vis.colorVariable = "title";
     vis.currentGroupList = selectedPositionTitles;
   }
 
@@ -218,7 +205,6 @@ class ScatterPlot {
       vis.filteredLocations,
       vis.filteredGenders
     );
-    vis.updateVis();
   }
 
   filterCompany() {
@@ -278,7 +264,7 @@ class ScatterPlot {
     switch (vis.colorVariable) {
       case "company":
         return d.company;
-      case "position":
+      case "title":
         return d.title;
       case "location":
         return d.location;
@@ -313,6 +299,21 @@ class ScatterPlot {
       .domain(vis.currentGroupList)
       .range(["blue", "green", "red", "violet"]); // color grouping
 
+    // Tooltip
+    vis.tip = d3
+      .tip()
+      .attr("class", "d3-tip")
+      .html((d) => {
+        let text = `<strong>Company: </strong> <span style='color:red;text-transform:capitalize'>${d.company}</span><br>`;
+        text += `<strong>Title: </strong> <span style='color:red;text-transform:capitalize'>${d.title}</span><br>`;
+        text += `<strong>Total Compensation: </strong> <span style='color:red'>$${numberWithCommas(
+          d.totalyearlycompensation
+        )}</span><br>`;
+        text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
+        return text;
+      });
+    vis.g.call(vis.tip);
+
     // Add dots
     vis.dots = vis.g.selectAll("circle").data(vis.dataFiltered);
 
@@ -336,35 +337,14 @@ class ScatterPlot {
     vis.dots
       .enter()
       .append("circle")
+      .on("mouseover", vis.tip.show)
+      .on("mouseout", vis.tip.hide)
       .attr("fill", (d) => this.groupColor(vis.getGroupByVariable(d)))
       .transition(vis.t)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
       .attr("cy", (d) => vis.y(d.yearsofexperience))
       .attr("r", vis.circleRad);
-
-    vis.dots.on("mouseover", function (d, idx, allData) {
-      d3.select(this).attr("r", vis.circleRad);
-      vis.tooltip.transition().duration(200).style("opacity", 1);
-      vis.tooltip.html(
-        "Company: <b>" +
-          d.company +
-          "</b> </br>" +
-          "Title: <b>" +
-          d.title +
-          "</b> </br>" +
-          "Total Compensation: <b>$" +
-          numberWithCommas(d.totalyearlycompensation) +
-          "</b> <br>" +
-          "Years of Experience: <b>" +
-          d.yearsofexperience +
-          " yrs</b> </br>"
-      );
-    });
-    vis.dots.on("mouseout", function (d, i) {
-      d3.select(this).attr("r", 4);
-      vis.tooltip.transition().duration(500).style("opacity", 0);
-    });
 
     // remove previous legend
     d3.selectAll(".legend").remove();
@@ -393,5 +373,41 @@ class ScatterPlot {
         .style("font-size", "15px")
         .text(d);
     });
+
+    const infoText = vis.generateInfoText();
+    vis.infoBox.html(infoText).transition().duration(1000).ease(d3.easeLinear);
+  }
+
+  generateInfoText() {
+    const vis = this;
+    const data = {};
+    const groupByList = vis.currentGroupList;
+    let groupTextInfo = "";
+    data.count = vis.dataFiltered.length;
+    groupByList.forEach((d) => {
+      const dataForGroup = vis.dataFiltered.filter(
+        (dp) => dp[vis.colorVariable] === d
+      );
+      data.d = {};
+      data.d.median = d3.median(
+        dataForGroup,
+        (dp) => dp.totalyearlycompensation
+      );
+      data.d.average = d3.mean(
+        dataForGroup,
+        (dp) => dp.totalyearlycompensation
+      );
+      groupTextInfo += `Median compensation for ${d} is $${numberWithCommas(
+        data.d.median
+      )} and average compensation is $${numberWithCommas(
+        Math.floor(data.d.average)
+      )}. `;
+    });
+
+    return `Currently displaying ${
+      data.count
+    } different datapoints. </br> Groups represented as color variables are: ${groupByList.join(
+      ", "
+    )}. </br> ${groupTextInfo}`;
   }
 }
