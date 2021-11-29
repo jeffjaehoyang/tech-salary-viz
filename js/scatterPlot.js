@@ -128,7 +128,8 @@ class ScatterPlot {
     vis.dataFiltered = intersectMany(
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
-      vis.filteredLocations
+      vis.filteredLocations,
+      vis.filteredGenders
     );
   }
 
@@ -139,7 +140,8 @@ class ScatterPlot {
     vis.dataFiltered = intersectMany(
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
-      vis.filteredLocations
+      vis.filteredLocations,
+      vis.filteredGenders
     );
   }
 
@@ -150,7 +152,20 @@ class ScatterPlot {
     vis.dataFiltered = intersectMany(
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
-      vis.filteredLocations
+      vis.filteredLocations,
+      vis.filteredGenders
+    );
+  }
+
+  resetGender() {
+    const vis = this;
+    vis.filteredGenders = allCalls;
+    $("#gender-select").selectpicker("deselectAll");
+    vis.dataFiltered = intersectMany(
+      vis.filteredCompanyNames,
+      vis.filteredPositionTitles,
+      vis.filteredLocations,
+      vis.filteredGenders
     );
   }
 
@@ -178,6 +193,14 @@ class ScatterPlot {
     vis.currentGroupList = selectedLocations;
   }
 
+  groupGender() {
+    // color group by location
+    const vis = this;
+    const selectedGenders = $("#gender-select").val();
+    vis.colorVariable = "gender";
+    vis.currentGroupList = selectedGenders;
+  }
+
   wrangleData() {
     const vis = this;
     vis.t = d3.transition().duration(750);
@@ -185,10 +208,12 @@ class ScatterPlot {
     vis.filterCompany();
     vis.filterPosition();
     vis.filterLocation();
+    vis.filterGender();
     vis.dataFiltered = intersectMany(
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
-      vis.filteredLocations
+      vis.filteredLocations,
+      vis.filteredGenders
     );
     vis.updateVis();
   }
@@ -232,6 +257,19 @@ class ScatterPlot {
     }
   }
 
+  filterGender() {
+    const vis = this;
+    // filter by gender and call in wrangleData()
+    const selectedGenders = $("#gender-select").val();
+    if (selectedGenders.length > 0) {
+      vis.filteredGenders = allCalls.filter(({ gender }) =>
+        selectedGenders.includes(gender)
+      );
+    } else {
+      vis.filteredGenders = allCalls;
+    }
+  }
+
   getGroupByVariable(d) {
     const vis = this;
     switch (vis.colorVariable) {
@@ -241,6 +279,8 @@ class ScatterPlot {
         return d.title;
       case "location":
         return d.location;
+      case "gender":
+        return d.gender;
     }
   }
 
