@@ -58,18 +58,6 @@ class ScatterPlot {
       .call(vis.xAxisCall);
     vis.yAxis = vis.g.append("g").attr("class", "y axis").call(vis.yAxisCall);
 
-    // Add tooltip
-    vis.tooltip = d3
-      .select("#main-scatter-plot")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0)
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "10px");
-
     // Labels
     const xLabel = vis.g
       .append("text")
@@ -89,7 +77,8 @@ class ScatterPlot {
       .text("Years of Experience");
 
     // Add dots
-    vis.dots = vis.g.selectAll("circle").data(allCalls);
+    vis.dots = vis.g.selectAll("circle").data(vis.dataFiltered);
+
     vis.dots
       .enter()
       .append("circle")
@@ -99,20 +88,34 @@ class ScatterPlot {
       .attr("r", vis.circleRad)
       .attr("fill", vis.baseColor);
 
+    vis.tooltip = d3
+      .select("#main-scatter-plot")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("margin-left", `${vis.MARGIN.LEFT}px`)
+      .style("opacity", 0)
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px");
+
     vis.dots.on("mouseover", function (d, idx, allData) {
       d3.select(this).attr("r", vis.circleRad);
       vis.tooltip.transition().duration(200).style("opacity", 1);
       vis.tooltip.html(
-        "Company <b>" +
+        "Company: <b>" +
           d.company +
-          "</b>: " +
-          "title=" +
+          "</b> </br>" +
+          "Title: <b>" +
           d.title +
-          ", tc=" +
-          d.totalyearlycompensation +
-          "<br>" +
-          "yoe=" +
-          d.yearsofexperience
+          "</b> </br>" +
+          "Total Compensation: <b>$" +
+          numberWithCommas(d.totalyearlycompensation) +
+          "</b> <br>" +
+          "Years of Experience: <b>" +
+          d.yearsofexperience +
+          " yrs</b> </br>"
       );
     });
     vis.dots.on("mouseout", function (d, i) {
@@ -363,6 +366,7 @@ class ScatterPlot {
       vis.tooltip.transition().duration(500).style("opacity", 0);
     });
 
+    // remove previous legend
     d3.selectAll(".legend").remove();
 
     const legend = vis.g
