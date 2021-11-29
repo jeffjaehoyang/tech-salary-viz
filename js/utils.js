@@ -5,6 +5,10 @@ function upperCaseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const parseCityName = (string) => {
   // "San Francisco, CA"
   return string.split(",")[0];

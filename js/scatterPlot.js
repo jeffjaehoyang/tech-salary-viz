@@ -344,16 +344,18 @@ class ScatterPlot {
       d3.select(this).attr("r", vis.circleRad);
       vis.tooltip.transition().duration(200).style("opacity", 1);
       vis.tooltip.html(
-        "Company <b>" +
+        "Company: <b>" +
           d.company +
-          "</b>: " +
-          "title=" +
+          "</b> </br>" +
+          "Title: <b>" +
           d.title +
-          ", tc=" +
-          d.totalyearlycompensation +
-          "<br>" +
-          "yoe=" +
-          d.yearsofexperience
+          "</b> </br>" +
+          "Total Compensation: <b>$" +
+          numberWithCommas(d.totalyearlycompensation) +
+          "</b> <br>" +
+          "Years of Experience: <b>" +
+          d.yearsofexperience +
+          " yrs</b> </br>"
       );
     });
     vis.dots.on("mouseout", function (d, i) {
