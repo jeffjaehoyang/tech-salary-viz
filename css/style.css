@@ -43,8 +43,12 @@
   margin-top: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
+}
+
+.reset-btn {
+  margin-right: 10px;
 }
 
 body {

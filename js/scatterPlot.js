@@ -22,7 +22,7 @@ class ScatterPlot {
       .scaleOrdinal()
       .range(["blue", "green", "red", "violet"]); // color grouping
 
-    vis.MARGIN = { LEFT: 80, RIGHT: 100, TOP: 50, BOTTOM: 40 };
+    vis.MARGIN = { LEFT: 80, RIGHT: 100, TOP: 50, BOTTOM: 100 };
     // get the current width of the div where the chart appear, and attribute it to Svg
     vis.WIDTH =
       parseInt(d3.select("#main-scatter-plot").style("width"), 10) -
@@ -69,6 +69,24 @@ class ScatterPlot {
       .style("border-width", "1px")
       .style("border-radius", "5px")
       .style("padding", "10px");
+
+    // Labels
+    const xLabel = vis.g
+      .append("text")
+      .attr("y", vis.HEIGHT + 50)
+      .attr("x", vis.WIDTH / 2)
+      .attr("font-size", "15px")
+      .attr("text-anchor", "middle")
+      .text("Total Yearly Compensation ($)");
+
+    const yLabel = vis.g
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("x", -170)
+      .attr("font-size", "15px")
+      .attr("text-anchor", "middle")
+      .text("Years of Experience");
 
     // Add dots
     vis.dots = vis.g.selectAll("circle").data(allCalls);
