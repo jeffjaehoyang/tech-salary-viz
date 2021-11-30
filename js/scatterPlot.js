@@ -14,6 +14,10 @@ class ScatterPlot {
     this.circleRad = 3.7;
     this.colorVariable = "company";
     this.baseColor = "blue";
+    this.yoeRange = [
+      d3.max(this.dataFiltered.map((d) => d.yearsofexperience)),
+      0,
+    ];
     this.initVis();
   }
 
@@ -130,11 +134,10 @@ class ScatterPlot {
   brushed(vis) {
     const selection = d3.event.selection;
     if (!selection) {
-      vis.yoeRange = [vis.HEIGHT, 0];
+      vis.resetYOE();
     } else {
       vis.yoeRange = selection.map(vis.y.invert);
     }
-    vis.filterYOE();
     vis.wrangleData();
     vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
     vis.updateVis();
@@ -148,7 +151,8 @@ class ScatterPlot {
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
       vis.filteredLocations,
-      vis.filteredGenders
+      vis.filteredGenders,
+      vis.filteredYOE
     );
   }
 
@@ -160,7 +164,8 @@ class ScatterPlot {
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
       vis.filteredLocations,
-      vis.filteredGenders
+      vis.filteredGenders,
+      vis.filteredYOE
     );
   }
 
@@ -172,7 +177,8 @@ class ScatterPlot {
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
       vis.filteredLocations,
-      vis.filteredGenders
+      vis.filteredGenders,
+      vis.filteredYOE
     );
   }
 
@@ -184,8 +190,25 @@ class ScatterPlot {
       vis.filteredCompanyNames,
       vis.filteredPositionTitles,
       vis.filteredLocations,
-      vis.filteredGenders
+      vis.filteredGenders,
+      vis.filteredYOE
     );
+  }
+
+  resetYOE() {
+    const vis = this;
+    vis.filteredYOE = allCalls;
+    vis.dataFiltered = intersectMany(
+      vis.filteredCompanyNames,
+      vis.filteredPositionTitles,
+      vis.filteredLocations,
+      vis.filteredGenders,
+      vis.filteredYOE
+    );
+    this.yoeRange = [
+      d3.max(vis.dataFiltered.map((d) => d.yearsofexperience)),
+      0,
+    ];
   }
 
   groupCompany() {
@@ -292,7 +315,6 @@ class ScatterPlot {
 
   filterYOE() {
     const vis = this;
-    if (vis.yoeRange == null) vis.filteredYOE = allCalls;
     vis.filteredYOE = allCalls.filter(
       (d) =>
         d.yearsofexperience <= vis.yoeRange[0] &&
@@ -326,7 +348,13 @@ class ScatterPlot {
       .range([0, vis.WIDTH]);
     vis.y = d3
       .scaleLinear()
-      .domain([0, d3.max(vis.dataFiltered.map((d) => d.yearsofexperience))])
+      .domain([
+        vis.yoeRange[1],
+        Math.min(
+          vis.yoeRange[0],
+          d3.max(vis.dataFiltered.map((d) => d.yearsofexperience))
+        ),
+      ])
       .range([vis.HEIGHT, 0]);
 
     // update axes
