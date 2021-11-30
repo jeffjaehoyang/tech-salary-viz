@@ -16,6 +16,7 @@ class ScatterPlot {
     this.colorVariable;
     this.baseColor = "blue";
     this.yAxisvar = "d.yearsofexperience"
+    this.yAxisLabel = "Years of Experience"
     this.yAxisRange = [
       d3.max(this.dataFiltered.map((d) => eval(this.yAxisvar))),
       0,
@@ -80,7 +81,7 @@ class ScatterPlot {
       .attr("x", -170)
       .attr("font-size", "15px")
       .attr("text-anchor", "middle")
-      .text("Years of Experience");
+      .text(this.yAxisLabel);
 
     //brush
     vis.brush = d3
