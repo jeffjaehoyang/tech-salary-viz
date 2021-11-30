@@ -15,8 +15,9 @@ class ScatterPlot {
     this.circleRad = 3.7;
     this.colorVariable;
     this.baseColor = "blue";
-    this.yoeRange = [
-      d3.max(this.dataFiltered.map((d) => d.yearsofexperience)),
+    this.yAxisvar = "d.yearsofexperience"
+    this.yAxisRange = [
+      d3.max(this.dataFiltered.map((d) => eval(this.yAxisvar))),
       0,
     ];
     this.initVis();
@@ -51,7 +52,7 @@ class ScatterPlot {
       .range([0, vis.WIDTH]);
     vis.y = d3
       .scaleLinear()
-      .domain([0, d3.max(vis.dataFiltered.map((d) => d.yearsofexperience))])
+      .domain([0, d3.max(vis.dataFiltered.map((d) => eval(this.yAxisvar)))])
       .range([vis.HEIGHT, 0]);
 
     vis.yAxisCall = d3.axisLeft(vis.y).ticks();
@@ -123,7 +124,7 @@ class ScatterPlot {
       .on("mouseout", vis.tip.hide)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
-      .attr("cy", (d) => vis.y(d.yearsofexperience))
+      .attr("cy", (d) => vis.y(eval(this.yAxisvar)))
       .attr("r", vis.circleRad)
       .attr("fill", vis.baseColor);
 
@@ -138,7 +139,7 @@ class ScatterPlot {
     if (!selection) {
       vis.resetYOE();
     } else {
-      vis.yoeRange = selection.map(vis.y.invert);
+      vis.yAxisRange = selection.map(vis.y.invert);
     }
     vis.wrangleData();
     vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
@@ -242,8 +243,8 @@ class ScatterPlot {
       vis.filteredGenders,
       vis.filteredYOE
     );
-    this.yoeRange = [
-      d3.max(vis.dataFiltered.map((d) => d.yearsofexperience)),
+    this.yAxisRange = [
+      d3.max(vis.dataFiltered.map((d) => eval(this.yAxisvar))),
       0,
     ];
   }
@@ -402,8 +403,8 @@ class ScatterPlot {
     const vis = this;
     vis.filteredYOE = allCalls.filter(
       (d) =>
-        d.yearsofexperience <= vis.yoeRange[0] &&
-        d.yearsofexperience >= vis.yoeRange[1]
+        eval(this.yAxisvar) <= vis.yAxisRange[0] &&
+        eval(this.yAxisvar) >= vis.yAxisRange[1]
     );
   }
 
@@ -434,10 +435,10 @@ class ScatterPlot {
     vis.y = d3
       .scaleLinear()
       .domain([
-        vis.yoeRange[1],
+        vis.yAxisRange[1],
         Math.min(
-          vis.yoeRange[0],
-          d3.max(vis.dataFiltered.map((d) => d.yearsofexperience))
+          vis.yAxisRange[0],
+          d3.max(vis.dataFiltered.map((d) => eval(this.yAxisvar)))
         ),
       ])
       .range([vis.HEIGHT, 0]);
@@ -464,6 +465,8 @@ class ScatterPlot {
           d.totalyearlycompensation
         )}</span><br>`;
         text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
+        text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`
+        text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`
         return text;
       });
     vis.g.call(vis.tip);
@@ -489,7 +492,7 @@ class ScatterPlot {
       .transition(vis.t)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
-      .attr("cy", (d) => vis.y(d.yearsofexperience))
+      .attr("cy", (d) => vis.y(eval(this.yAxisvar)))
       .attr("r", vis.circleRad);
 
     vis.dots
@@ -505,7 +508,7 @@ class ScatterPlot {
       .transition(vis.t)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
-      .attr("cy", (d) => vis.y(d.yearsofexperience))
+      .attr("cy", (d) => vis.y(eval(this.yAxisvar)))
       .attr("r", vis.circleRad);
 
     // remove previous legend
