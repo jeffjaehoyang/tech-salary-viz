@@ -11,8 +11,9 @@ class ScatterPlot {
     this.filteredLocations = allCalls;
     this.filteredYOE = allCalls;
     this.currentGroupList = [];
+    this.appliedFilters = [];
     this.circleRad = 3.7;
-    this.colorVariable = "company";
+    this.colorVariable;
     this.baseColor = "blue";
     this.yoeRange = [
       d3.max(this.dataFiltered.map((d) => d.yearsofexperience)),
@@ -88,7 +89,6 @@ class ScatterPlot {
         [0, 0],
         [vis.WIDTH, vis.HEIGHT],
       ])
-      .on("start", () => vis.brushComponent.style("opacity", 1))
       .on("end", () => vis.brushed(this));
 
     vis.brushComponent = vis.g
@@ -139,8 +139,22 @@ class ScatterPlot {
       vis.yoeRange = selection.map(vis.y.invert);
     }
     vis.wrangleData();
-    vis.brushComponent.style("opacity", 0);
-    // vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
+    vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
+    //brush
+    vis.brush = d3
+      .brushY()
+      .handleSize(10)
+      .extent([
+        [0, 0],
+        [vis.WIDTH, vis.HEIGHT],
+      ])
+      .on("end", () => vis.brushed(this));
+
+    vis.brushComponent = vis.g
+      .append("g")
+      .attr("class", "brush")
+      .call(vis.brush);
+
     vis.updateVis();
   }
 
@@ -155,6 +169,11 @@ class ScatterPlot {
       vis.filteredGenders,
       vis.filteredYOE
     );
+    vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+      return e !== "company";
+    });
+    vis.colorVariable =
+      vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
   }
 
   resetPosition() {
@@ -168,6 +187,11 @@ class ScatterPlot {
       vis.filteredGenders,
       vis.filteredYOE
     );
+    vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+      return e !== "title";
+    });
+    vis.colorVariable =
+      vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
   }
 
   resetLocation() {
@@ -181,6 +205,11 @@ class ScatterPlot {
       vis.filteredGenders,
       vis.filteredYOE
     );
+    vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+      return e !== "location";
+    });
+    vis.colorVariable =
+      vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
   }
 
   resetGender() {
@@ -194,6 +223,11 @@ class ScatterPlot {
       vis.filteredGenders,
       vis.filteredYOE
     );
+    vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+      return e !== "gender";
+    });
+    vis.colorVariable =
+      vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
   }
 
   resetYOE() {
@@ -267,11 +301,18 @@ class ScatterPlot {
     // filter by company and call in wrangleData()
     const selectedCompanyNames = $("#company-select").val();
     if (selectedCompanyNames.length > 0) {
+      if (!vis.appliedFilters.includes("company"))
+        vis.appliedFilters.push("company");
       vis.filteredCompanyNames = allCalls.filter(({ company }) =>
         selectedCompanyNames.includes(company)
       );
     } else {
       vis.filteredCompanyNames = allCalls;
+      vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+        return e !== "company";
+      });
+      vis.colorVariable =
+        vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
   }
 
@@ -280,11 +321,18 @@ class ScatterPlot {
     // filter by position name (swe, pm, etc) and call in wrangleData()
     const selectedPositions = $("#position-select").val();
     if (selectedPositions.length > 0) {
+      if (!vis.appliedFilters.includes("title"))
+        vis.appliedFilters.push("title");
       vis.filteredPositionTitles = allCalls.filter(({ title }) =>
         selectedPositions.includes(title)
       );
     } else {
       vis.filteredPositionTitles = allCalls;
+      vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+        return e !== "title";
+      });
+      vis.colorVariable =
+        vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
   }
 
@@ -293,11 +341,18 @@ class ScatterPlot {
     // filter by location and call in wrangleData()
     const selectedLocations = $("#city-select").val();
     if (selectedLocations.length > 0) {
+      if (!vis.appliedFilters.includes("location"))
+        vis.appliedFilters.push("location");
       vis.filteredLocations = allCalls.filter(({ location }) =>
         selectedLocations.includes(location)
       );
     } else {
       vis.filteredLocations = allCalls;
+      vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+        return e !== "location";
+      });
+      vis.colorVariable =
+        vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
   }
 
@@ -306,11 +361,18 @@ class ScatterPlot {
     // filter by gender and call in wrangleData()
     const selectedGenders = $("#gender-select").val();
     if (selectedGenders.length > 0) {
+      if (!vis.appliedFilters.includes("gender"))
+        vis.appliedFilters.push("gender");
       vis.filteredGenders = allCalls.filter(({ gender }) =>
         selectedGenders.includes(gender)
       );
     } else {
       vis.filteredGenders = allCalls;
+      vis.appliedFilters = vis.appliedFilters.filter(function (e) {
+        return e !== "gender";
+      });
+      vis.colorVariable =
+        vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
   }
 
@@ -397,7 +459,11 @@ class ScatterPlot {
 
     vis.dots
       .attr("class", "update")
-      .attr("fill", (d) => this.groupColor(vis.getGroupByVariable(d)))
+      .attr("fill", (d) =>
+        vis.colorVariable
+          ? this.groupColor(vis.getGroupByVariable(d))
+          : vis.baseColor
+      )
       .transition(vis.t)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
@@ -409,7 +475,11 @@ class ScatterPlot {
       .append("circle")
       .on("mouseover", vis.tip.show)
       .on("mouseout", vis.tip.hide)
-      .attr("fill", (d) => this.groupColor(vis.getGroupByVariable(d)))
+      .attr("fill", (d) =>
+        vis.colorVariable
+          ? this.groupColor(vis.getGroupByVariable(d))
+          : vis.baseColor
+      )
       .transition(vis.t)
       .style("opacity", 0.5)
       .attr("cx", (d) => vis.x(d.totalyearlycompensation))
@@ -450,9 +520,12 @@ class ScatterPlot {
 
   generateInfoText() {
     const vis = this;
-    const data = {};
     const groupByList = vis.currentGroupList;
-    let groupTextInfo = "";
+    const groupByInfo = `</br> Groups represented as color variables are: ${groupByList.join(
+      ", "
+    )}. `;
+    const data = {};
+    let groupTextInfo = "</br> ";
     data.count = vis.dataFiltered.length;
     groupByList.forEach((d) => {
       const dataForGroup = vis.dataFiltered.filter(
@@ -474,10 +547,8 @@ class ScatterPlot {
       )}. `;
     });
 
-    return `Currently displaying ${
-      data.count
-    } different datapoints. </br> Groups represented as color variables are: ${groupByList.join(
-      ", "
-    )}. </br> ${groupTextInfo}`;
+    return `Currently displaying ${data.count} different datapoints. ${
+      groupByList.length > 0 ? groupByInfo : ""
+    } ${groupTextInfo}`;
   }
 }
