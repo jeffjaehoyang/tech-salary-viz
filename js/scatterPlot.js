@@ -107,6 +107,8 @@ class ScatterPlot {
           d.totalyearlycompensation
         )}</span><br>`;
         text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
+        text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`
+        text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`
         return text;
       });
     vis.g.call(vis.tip);
