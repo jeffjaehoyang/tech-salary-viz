@@ -10,13 +10,14 @@ class ScatterPlot {
     this.filteredPositionTitles = allCalls;
     this.filteredLocations = allCalls;
     this.filteredYOE = allCalls;
+    this.filteredGenders = allCalls;
     this.currentGroupList = [];
     this.appliedFilters = [];
     this.circleRad = 3.7;
     this.colorVariable;
     this.baseColor = "blue";
-    this.yAxisvar = "d.yearsofexperience"
-    this.yAxisLabel = "Years of Experience"
+    this.yAxisvar = "d.yearsofexperience";
+    this.yAxisLabel = "Years of Experience";
     this.yAxisRange = [
       d3.max(this.dataFiltered.map((d) => eval(this.yAxisvar))),
       0,
@@ -110,9 +111,9 @@ class ScatterPlot {
           d.totalyearlycompensation
         )}</span><br>`;
         text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
-        text += `<strong>Years of at Company: </strong> <span style='color:red'>${d.yearsatcompany} yrs</span><br>`;
-        text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`
-        text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`
+        text += `<strong>Years at Company: </strong> <span style='color:red'>${d.yearsatcompany} yrs</span><br>`;
+        text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`;
+        text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`;
         return text;
       });
     vis.g.call(vis.tip);
@@ -144,7 +145,6 @@ class ScatterPlot {
     } else {
       vis.yAxisRange = selection.map(vis.y.invert);
     }
-    vis.wrangleData();
     vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
     //brush
     vis.brush = d3
@@ -161,6 +161,7 @@ class ScatterPlot {
       .attr("class", "brush")
       .call(vis.brush);
 
+    vis.wrangleData();
     vis.updateVis();
   }
 
@@ -261,9 +262,9 @@ class ScatterPlot {
   }
 
   changeYAxis(yAxisval) {
-    this.yAxisLabel = yAxisval
-    yAxisval=yAxisval.toLowerCase().split(" ").join("")
-    this.yAxisvar = `d.`+yAxisval
+    this.yAxisLabel = yAxisval;
+    yAxisval = yAxisval.toLowerCase().split(" ").join("");
+    this.yAxisvar = `d.` + yAxisval;
   }
 
   groupPosition() {
@@ -459,7 +460,7 @@ class ScatterPlot {
     vis.yAxis.transition(vis.t).call(vis.yAxisCall);
 
     d3.selectAll(".yAxislabel").remove();
-    
+
     const yLabel = vis.g
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -486,9 +487,9 @@ class ScatterPlot {
           d.totalyearlycompensation
         )}</span><br>`;
         text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
-        text += `<strong>Years of at Company: </strong> <span style='color:red'>${d.yearsatcompany} yrs</span><br>`;
-        text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`
-        text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`
+        text += `<strong>Years at Company: </strong> <span style='color:red'>${d.yearsatcompany} yrs</span><br>`;
+        text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`;
+        text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`;
         return text;
       });
     vis.g.call(vis.tip);
