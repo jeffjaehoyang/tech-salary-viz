@@ -154,7 +154,7 @@ function initDropdown() {
   $genderDropdown.selectpicker("refresh");
 
   const $yAxisDropdown = $("#yAxis-select");
-  $yAxisDropdown.append(`<option value="yearsofexperience">Years of Experience</option>`)
-  $yAxisDropdown.append(`<option value="yearsatcompany">Years at Company</option>`)
+  $yAxisDropdown.append(`<option value="Years of Experience">Years of Experience</option>`)
+  $yAxisDropdown.append(`<option value="Years at Company">Years at Company</option>`)
   $yAxisDropdown.selectpicker("refresh");
 }

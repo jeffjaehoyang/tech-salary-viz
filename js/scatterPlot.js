@@ -81,6 +81,7 @@ class ScatterPlot {
       .attr("x", -170)
       .attr("font-size", "15px")
       .attr("text-anchor", "middle")
+      .attr("class", "yAxislabel")
       .text(this.yAxisLabel);
 
     //brush
@@ -109,6 +110,7 @@ class ScatterPlot {
           d.totalyearlycompensation
         )}</span><br>`;
         text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
+        text += `<strong>Years of at Company: </strong> <span style='color:red'>${d.yearsatcompany} yrs</span><br>`;
         text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`
         text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`
         return text;
@@ -259,6 +261,8 @@ class ScatterPlot {
   }
 
   changeYAxis(yAxisval) {
+    this.yAxisLabel = yAxisval
+    yAxisval=yAxisval.toLowerCase().split(" ").join("")
     this.yAxisvar = `d.`+yAxisval
   }
 
@@ -454,6 +458,18 @@ class ScatterPlot {
     vis.yAxisCall.scale(vis.y);
     vis.yAxis.transition(vis.t).call(vis.yAxisCall);
 
+    d3.selectAll(".yAxislabel").remove();
+    
+    const yLabel = vis.g
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("x", -170)
+      .attr("font-size", "15px")
+      .attr("text-anchor", "middle")
+      .attr("class", "yAxislabel")
+      .text(this.yAxisLabel);
+
     this.groupColor = d3
       .scaleOrdinal()
       .domain(vis.currentGroupList)
@@ -470,6 +486,7 @@ class ScatterPlot {
           d.totalyearlycompensation
         )}</span><br>`;
         text += `<strong>Years of Experience: </strong> <span style='color:red'>${d.yearsofexperience} yrs</span><br>`;
+        text += `<strong>Years of at Company: </strong> <span style='color:red'>${d.yearsatcompany} yrs</span><br>`;
         text += `<strong>Gender: </strong> <span style='color:red'>${d.gender}</span><br>`
         text += `<strong>City: </strong> <span style='color:red'>${d.location}</span><br>`
         return text;
