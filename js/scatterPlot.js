@@ -6,10 +6,10 @@ class ScatterPlot {
   constructor(_parentElement) {
     this.parentElement = _parentElement;
     this.dataFiltered = allCalls;
-    this.filteredCompanyNames = [];
-    this.filteredPositionTitles = [];
-    this.filteredLocations = [];
-    this.filteredYOE = [];
+    this.filteredCompanyNames = allCalls;
+    this.filteredPositionTitles = allCalls;
+    this.filteredLocations = allCalls;
+    this.filteredYOE = allCalls;
     this.currentGroupList = [];
     this.circleRad = 3.7;
     this.colorVariable = "company";
@@ -28,7 +28,6 @@ class ScatterPlot {
       .range(["blue", "green", "red", "violet"]); // color grouping
 
     vis.MARGIN = { LEFT: 80, RIGHT: 100, TOP: 50, BOTTOM: 100 };
-    // get the current width of the div where the chart appear, and attribute it to Svg
     vis.WIDTH =
       parseInt(d3.select("#main-scatter-plot").style("width"), 10) -
       vis.MARGIN.LEFT -
@@ -81,6 +80,22 @@ class ScatterPlot {
       .attr("text-anchor", "middle")
       .text("Years of Experience");
 
+    //brush
+    vis.brush = d3
+      .brushY()
+      .handleSize(10)
+      .extent([
+        [0, 0],
+        [vis.WIDTH, vis.HEIGHT],
+      ])
+      .on("start", () => vis.brushComponent.style("opacity", 1))
+      .on("end", () => vis.brushed(this));
+
+    vis.brushComponent = vis.g
+      .append("g")
+      .attr("class", "brush")
+      .call(vis.brush);
+
     // Tooltip
     vis.tip = d3
       .tip()
@@ -114,21 +129,6 @@ class ScatterPlot {
     vis.infoBox.html(
       "Data summary will be displayed once filters are applied."
     );
-
-    //brush
-    vis.brush = d3
-      .brushY()
-      .handleSize(10)
-      .extent([
-        [0, 0],
-        [vis.WIDTH, vis.HEIGHT],
-      ])
-      .on("end", () => vis.brushed(this));
-
-    vis.brushComponent = vis.g
-      .append("g")
-      .attr("class", "brush")
-      .call(vis.brush);
   }
 
   brushed(vis) {
@@ -139,7 +139,8 @@ class ScatterPlot {
       vis.yoeRange = selection.map(vis.y.invert);
     }
     vis.wrangleData();
-    vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
+    vis.brushComponent.style("opacity", 0);
+    // vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
     vis.updateVis();
   }
 
@@ -444,22 +445,7 @@ class ScatterPlot {
     });
 
     const infoText = vis.generateInfoText();
-    vis.infoBox.html(infoText).transition().duration(1000).ease(d3.easeLinear);
-
-    //brush
-    vis.brush = d3
-      .brushY()
-      .handleSize(10)
-      .extent([
-        [0, 0],
-        [vis.WIDTH, vis.HEIGHT],
-      ])
-      .on("end", () => vis.brushed(this));
-
-    vis.brushComponent = vis.g
-      .append("g")
-      .attr("class", "brush")
-      .call(vis.brush);
+    vis.infoBox.html(infoText).transition();
   }
 
   generateInfoText() {
