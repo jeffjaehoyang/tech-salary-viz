@@ -311,6 +311,11 @@ class ScatterPlot {
       vis.appliedFilters = vis.appliedFilters.filter(function (e) {
         return e !== "company";
       });
+    }
+    if (
+      vis.colorVariable === "company" &&
+      !vis.appliedFilters.includes("company")
+    ) {
       vis.colorVariable =
         vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
@@ -331,6 +336,11 @@ class ScatterPlot {
       vis.appliedFilters = vis.appliedFilters.filter(function (e) {
         return e !== "title";
       });
+    }
+    if (
+      vis.colorVariable === "title" &&
+      !vis.appliedFilters.includes("title")
+    ) {
       vis.colorVariable =
         vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
@@ -351,6 +361,11 @@ class ScatterPlot {
       vis.appliedFilters = vis.appliedFilters.filter(function (e) {
         return e !== "location";
       });
+    }
+    if (
+      vis.colorVariable === "location" &&
+      !vis.appliedFilters.includes("location")
+    ) {
       vis.colorVariable =
         vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
@@ -371,6 +386,11 @@ class ScatterPlot {
       vis.appliedFilters = vis.appliedFilters.filter(function (e) {
         return e !== "gender";
       });
+    }
+    if (
+      vis.colorVariable === "gender" &&
+      !vis.appliedFilters.includes("gender")
+    ) {
       vis.colorVariable =
         vis.appliedFilters.length > 0 ? vis.appliedFilters[0] : null;
     }
