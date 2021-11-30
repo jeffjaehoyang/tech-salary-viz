@@ -42,6 +42,8 @@ d3.csv("data/tech_salary_data.csv").then((data) => {
   cityNames = allCalls.map((d) => d.location);
   uniqueCityNames = [...new Set(cityNames)];
 
+  yearsAtCompany = allCalls.map((d) => d.yearsatcompany);
+
   genders = allCalls
     .filter((d) => ["Male", "Female", "Other"].includes(d.gender))
     .map((p) => p.gender);
@@ -117,6 +119,11 @@ $("#gender-group").on("click", () => {
   scatterPlot.updateVis();
 });
 
+$("#yAxis-select").on("change", () => {
+  scatterPlot.changeYAxis($("#yAxis-select").val());
+  scatterPlot.updateVis();
+})
+
 function initDropdown() {
   const $companyDropdown = $("#company-select");
   $.each(uniqueCompanyNames, function (i, companyName) {
@@ -145,4 +152,9 @@ function initDropdown() {
     $genderDropdown.append(`<option value="${gender}">${gender}</option>`);
   });
   $genderDropdown.selectpicker("refresh");
+
+  const $yAxisDropdown = $("#yAxis-select");
+  $yAxisDropdown.append(`<option value="yearsofexperience">Years of Experience</option>`)
+  $yAxisDropdown.append(`<option value="yearsatcompany">Years at Company</option>`)
+  $yAxisDropdown.selectpicker("refresh");
 }

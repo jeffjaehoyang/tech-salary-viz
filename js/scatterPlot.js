@@ -258,6 +258,10 @@ class ScatterPlot {
     vis.currentGroupList = selectedCompanyNames;
   }
 
+  changeYAxis(yAxisval) {
+    this.yAxisvar = `d.`+yAxisval
+  }
+
   groupPosition() {
     // color group by position
     const vis = this;
