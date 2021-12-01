@@ -22,6 +22,7 @@ class ScatterPlot {
       d3.max(this.dataFiltered.map((d) => eval(this.yAxisvar))),
       0,
     ];
+    this.shouldBrushBeCleared = false;
     this.initVis();
   }
 
@@ -86,6 +87,8 @@ class ScatterPlot {
       .text(this.yAxisLabel);
 
     //brush
+    vis.brushComponent = vis.g.append("g").attr("class", "brush");
+
     vis.brush = d3
       .brushY()
       .handleSize(10)
@@ -95,10 +98,7 @@ class ScatterPlot {
       ])
       .on("end", () => vis.brushed(this));
 
-    vis.brushComponent = vis.g
-      .append("g")
-      .attr("class", "brush")
-      .call(vis.brush);
+    vis.brushComponent.call(vis.brush);
 
     // Tooltip
     vis.tip = d3
@@ -140,27 +140,17 @@ class ScatterPlot {
 
   brushed(vis) {
     const selection = d3.event.selection;
+    if (vis.shouldBrushBeCleared === true) {
+      vis.shouldBrushBeCleared = false;
+      return;
+    }
     if (!selection) {
       vis.resetYOE();
     } else {
       vis.yAxisRange = selection.map(vis.y.invert);
+      vis.shouldBrushBeCleared = true;
+      vis.brushComponent.call(vis.brush.move, null);
     }
-    vis.brushComponent.remove(); // This remove the grey brush area as soon as the selection has been done
-    //brush
-    vis.brush = d3
-      .brushY()
-      .handleSize(10)
-      .extent([
-        [0, 0],
-        [vis.WIDTH, vis.HEIGHT],
-      ])
-      .on("end", () => vis.brushed(this));
-
-    vis.brushComponent = vis.g
-      .append("g")
-      .attr("class", "brush")
-      .call(vis.brush);
-
     vis.wrangleData();
     vis.updateVis();
   }
